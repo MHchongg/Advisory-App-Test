@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listings</title>
+</head>
+<body>
+
+    <h1>Admin Listings</h1>
+    <form id="add-listing-form">
+        <input type="text" id="name" name="name" placeholder="Name" required>
+        <input type="submit" value="Add new listing" />
+    </form>
+
+    <ul>
+        <% listings.forEach(listing => { %>
+            <li>
+                <p>
+                    Name: <%= listing.name %>
+                </p>
+                <div>
+                    <a href="/admin/listing/<%= listing.id %>">Edit</a>
+                    <form class="delete-listing-form" data-id="<%= listing.id %>">
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+            </li>
+        <% }) %>
+    </ul>
+
+    <script>
+        const addListingForm = document.querySelector("#add-listing-form")
+
+        addListingForm.addEventListener('submit', async (event) => {
+            event.preventDefault()
+
+            const name = document.querySelector("#name").value
+
+            try {
+                const response = await fetch("/admin/listing", { 
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ name: name })
+                })
+                const result = await response.json()
+
+                if (response.ok) {
+                    alert(result.message)
+                }
+                else {
+                    throw new Error(result.message)
+                }
+
+            } catch (error) {
+                console.error(error)
+                alert(error)
+            }
+        })
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteForms = document.querySelectorAll('.delete-listing-form')
+
+            deleteForms.forEach(form => {
+                form.addEventListener('submit', async (event) => {
+                    event.preventDefault()
+
+                    const listingId = form.getAttribute('data-id')
+
+                    try {
+                        const response = await fetch(`/admin/listing/${listingId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+
+                        const result = await response.json()
+
+                        if (response.ok) {
+                            alert(result.message)
+                            form.closest('li').remove()
+                        } 
+                        else {
+                            alert(result.message)
+                        }
+                    } catch (error) {
+                        console.error(error)
+                        alert(error)
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>

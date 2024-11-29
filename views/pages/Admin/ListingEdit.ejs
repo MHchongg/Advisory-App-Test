@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Listings</title>
+</head>
+
+<body>
+
+    <h1>Edit Listings</h1>
+    <form id="edit-listing-form" data-id="<%= listing.id %>">
+        <input type="text" id="name" name="name" placeholder="Name" value="<%= listing.name %>" required>
+        <input type="submit" value="Update listing" />
+    </form>
+
+    <script>
+        const editListingForm = document.querySelector("#edit-listing-form")
+
+        editListingForm.addEventListener('submit', async (event) => {
+            event.preventDefault()
+
+            const name = document.querySelector("#name").value
+            const id = editListingForm.getAttribute('data-id')
+
+            try {
+                const response = await fetch(`/admin/listing/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: name })
+                })
+
+                const result = await response.json()
+
+                if (response.ok) {
+                    alert(result.message)
+                }
+                else {
+                    throw new Error(result.message)
+                }
+            } catch (error) {
+                console.error(error)
+                alert(error)
+            }
+        })
+    </script>
+</body>
+
+</html>
