@@ -41,4 +41,4 @@ JWT_SECRET_KEY=YOUR_JWT_SECRET_KEY
 
 ---
 
-## The application should be accessible via the local server (http://127.0.0.1:8000/).
+## The application should be accessible via the local server (http://127.0.0.1:8080/).
